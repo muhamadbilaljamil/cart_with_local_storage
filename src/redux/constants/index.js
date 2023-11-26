@@ -1,0 +1,6 @@
+// Cart Module
+export const ADD_TO_CART = "ADD_TO_CART";
+export const UPDATE_QUANTITY = "UPDATE_QUANTITY";
+export const LOCAL_CART = "LOCAL_CART";
+export const DELETE_FROM_CART = "DELETE_FROM_CART";
+export const ADD_PRODUCT_FEATURES = "ADD_PRODUCT_FEATURES";
