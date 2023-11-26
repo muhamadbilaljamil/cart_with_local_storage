@@ -2,7 +2,6 @@ import {
   ADD_TO_CART,
   ADD_PRODUCT_FEATURES,
   LOCAL_CART,
-  UPDATE_CART,
   UPDATE_QUANTITY,
   DELETE_FROM_CART,
 } from "../constants";

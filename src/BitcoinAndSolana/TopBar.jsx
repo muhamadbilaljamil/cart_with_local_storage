@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Loading from "./Loading";
@@ -7,7 +7,7 @@ import { useLocalStorage } from "./useLocalStorage";
 import { localCart, deleteProduct } from "../redux/actions/Cart";
 import { useLocation, Link } from "react-router-dom";
 
-import { Grid, Box, Typography } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import cart_icon from "./images/cart_icon.svg";
 import down_arrow from "./images/arrow-down.svg";
 import delete_icon from "./images/delete.svg";
@@ -196,25 +196,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TopBar = () => {
-  const { cart } = useSelector(({ cart }) => cart);
+  const { cart } = useSelector((state) => state);
   const search = useLocation().search;
   const id = new URLSearchParams(search).get("id");
-  const [getCart, setCart, removeCart] = useLocalStorage("cart");
+  const [getCart, setCart] = useLocalStorage("cart");
   const dispatch = useDispatch();
   const [checkout, setCheckout] = useState(false);
 
   useEffect(() => {
-    // if (cart.length == 0) {
-    //   let localCartItems = getCart();
-    //   if (localCartItems != null)
-    //     console.log("local Cart: ", localCartItems);
-    //   dispatch(localCart(localCartItems));
-    // } else {
-    // console.log("Set <L<Loading />oading /><Loading /><Loading />rt: ", cart)
-    setCart(cart);
-    // }
-    // console.log("Cart Change in Topbar: ", cart);
-  }, [cart]);
+    if (cart.length === 0) {
+      let localCartItems = getCart();
+      if (localCartItems.length > 0) {
+        dispatch(localCart(localCartItems));
+      }
+    } else {
+      setCart(cart);
+    }
+  }, [cart, getCart, setCart, dispatch]);
 
   const handleCheckout = () => {
     setCheckout(true);
@@ -252,7 +250,7 @@ const TopBar = () => {
             <Box className={classes.notificationIcon}>{cart?.length}</Box>
             <img className={classes.cartIcon} src={cart_icon} alt="cart icon" />
             <Box className="checkoutContainer">
-              {cart?.length == 0 ? (
+              {cart?.length === 0 ? (
                 <Box className="empty_cart">
                   <Typography>Cart is Empty</Typography>
                 </Box>
@@ -324,7 +322,7 @@ const TopBar = () => {
                 })
               )}
 
-              {cart?.length == 0 ? (
+              {cart?.length === 0 ? (
                 ""
               ) : (
                 <>

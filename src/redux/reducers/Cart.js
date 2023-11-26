@@ -6,7 +6,6 @@ import {
   ADD_TO_CART,
   UPDATE_QUANTITY,
   LOCAL_CART,
-  UPDATE_CART,
   ADD_PRODUCT_FEATURES,
   DELETE_FROM_CART,
 } from "../constants/";
@@ -16,22 +15,52 @@ const INIT_STATE = {
 };
 
 export default (state = INIT_STATE, action) => {
-  console.log("Local storage: ", state);
-  const [setCart] = useLocalStorage("cart");
+  // console.log("Local storage: ", state);
+  const [_, setCart] = useLocalStorage("cart");
   switch (action.type) {
     case ADD_TO_CART: {
       const new_item = action.payload;
-      let { cart } = state;
-      const isIncluded = cart.filter((item, index) =>
-        item.id == new_item.id ? cart[index]["quantity"]++ : ""
+      const existingItemIndex = state.cart.findIndex(
+        (item) => item.id === new_item.id
       );
-      if (isIncluded.length == 0) cart.push(new_item);
-      NotificationManager.success("Product is added to cart");
-      return {
-        ...state,
-        cart: [...cart],
-      };
+
+      if (existingItemIndex !== -1) {
+        // If item already exists, update quantity
+        const updatedCart = state.cart.map((item, index) =>
+          index === existingItemIndex
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+
+        NotificationManager.success("Product is added to cart");
+        return {
+          ...state,
+          cart: updatedCart,
+        };
+      } else {
+        // If item doesn't exist, add it to the cart
+        NotificationManager.success("Product is added to cart");
+        return {
+          ...state,
+          cart: [...state.cart, { ...new_item, quantity: 1 }],
+        };
+      }
     }
+
+    // case ADD_TO_CART: {
+    //   const new_item = action.payload;
+    //   let newdata = state.cart;
+
+    //   const isIncluded = newdata?.filter((item, index) =>
+    //     item.id == new_item.id ? newdata[index]["quantity"]++ : ""
+    //   );
+    //   if (isIncluded.length == 0) newdata = newdata.push(new_item);
+    //   NotificationManager.success("Product is added to cart");
+    //   return {
+    //     ...state,
+    //     cart: [...newdata],
+    //   };
+    // }
 
     case LOCAL_CART: {
       return {
@@ -42,7 +71,7 @@ export default (state = INIT_STATE, action) => {
 
     case UPDATE_QUANTITY: {
       const { index, operation } = action.payload;
-      if (operation == "add") {
+      if (operation === "add") {
         state.cart[index]["quantity"] += 1;
         NotificationManager.success("One item increased", "", 2000);
         // if(state.cart[index]['features']){
@@ -84,14 +113,14 @@ export default (state = INIT_STATE, action) => {
           NotificationManager.error("One Feature removed", "", 2000);
           if (
             _.isEmpty(item["features"][index]) &&
-            item["features"].length == 1
+            item["features"].length === 1
           ) {
             delete item["features"];
             NotificationManager.error("Features removed", "", 2000);
           }
           new_data[id] = item;
         }
-      } else if (item["features"].length == index) {
+      } else if (item["features"].length === index) {
         // console.log('This part is working lengtt == index');
         item["features"].push({ [key]: `package ${key}` });
         new_data[id] = item;
@@ -108,7 +137,7 @@ export default (state = INIT_STATE, action) => {
       const { indx } = action.payload;
       let newItems = state["cart"].filter((item, index) => index !== indx);
       NotificationManager.error("Product  removed", "", 2000);
-      if (newItems.length == 0) {
+      if (newItems.length === 0) {
         setCart(newItems);
         console.log("new Items: ", newItems);
       }

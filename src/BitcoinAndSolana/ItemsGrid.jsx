@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Grid, Box, Typography, Button } from "@material-ui/core";
+import { useEffect, useState } from "react";
+import { Grid, Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import solana_icon from "./images/solana-logo.svg";
 import plus from "./images/plus_icon.svg";
@@ -229,7 +229,7 @@ const ItemsGrid = () => {
 
       <Grid className={classes.gridContainer} container spacing={4}>
         {cardList?.map((item, index) => {
-          console.log(itemsString.includes(item.id));
+          // console.log(itemsString.includes(item.id));
           return (
             <Grid
               className={classes.cardItem}
